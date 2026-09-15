@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kacho System — Configurador web</title>
+<style>
+  :root{--bg:#0B131C;--card:#131E2A;--line:#22303F;--tx:#E8F0F7;--muted:#8FA3B5;--gold:#D8B255;--green:#32D77B}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+       background:var(--bg);color:var(--tx);
+       font-family:system-ui,"Segoe UI",Roboto,sans-serif;padding:24px}
+  .box{max-width:680px;width:100%;background:var(--card);border:1px solid var(--line);
+       border-radius:14px;padding:32px;text-align:center}
+  svg{display:block;margin:0 auto 8px}
+  h1{margin:.2em 0 0;font-size:1.7rem;color:var(--gold);letter-spacing:.5px}
+  .sub{color:var(--muted);margin:.3em 0 1.6em;font-size:.95rem}
+  a.btn{display:block;text-decoration:none;padding:14px 18px;border-radius:10px;margin:10px 0;
+        font-weight:600;border:1px solid var(--line);color:var(--tx);background:#0F1824}
+  a.btn:hover{border-color:var(--gold)}
+  a.primary{background:var(--green);color:#06210F;border-color:var(--green)}
+  a.primary:hover{filter:brightness(1.08)}
+  .nota{color:var(--muted);font-size:.85rem;margin-top:1.6em;line-height:1.5;text-align:left}
+  code{background:#0F1824;padding:2px 6px;border-radius:5px;color:var(--green)}
+</style>
+</head>
+<body>
+  <div class="box">
+    <svg width="72" height="72" viewBox="0 0 44 44" role="img" aria-label="Kacho System">
+      <g fill="none" stroke="#E8F0F7" stroke-width="2" stroke-linecap="round">
+        <line x1="20" y1="18" x2="20" y2="40"/>
+        <line x1="13" y1="40" x2="27" y2="40"/>
+        <path d="M13.9 9.9 A7 7 0 0 1 26.1 9.9"/>
+        <path d="M9.8 5.8 A11 11 0 0 1 30.2 5.8"/>
+      </g>
+      <circle cx="20" cy="16" r="2.4" fill="#32D77B"/>
+    </svg>
+    <h1>Kacho System</h1>
+    <div class="sub">Configurador web — nodos APRS-LoRa de 433 MHz (nRF52840)</div>
+
+    <a class="btn primary" href="configurador.html">Abrir el configurador</a>
+    <a class="btn" href="flasher.html">Grabar el firmware en un nodo</a>
+    <a class="btn" href="Manual_Kacho_System.pdf">Manual de uso (PDF)</a>
+    <a class="btn" href="https://github.com/EA2OY/EA2OY-APRS-SYSTEM">Firmware y codigo fuente</a>
+
+    <div class="nota">
+      <strong>Como se usa:</strong> abre el configurador con <strong>Chrome o Edge</strong> en un
+      ordenador, conecta el nodo por USB y pulsa <code>Conectar</code>. Desde el movil se puede
+      consultar, pero WebSerial solo existe en navegador de escritorio.
+      <br><br>
+      <strong>¿Nodo nuevo?</strong> Empieza por <a href="flasher.html" style="color:#32D77B">grabar
+      el firmware</a>: te lleva paso a paso, con la copia de seguridad de lo que traía la placa y
+      una comprobación de en qué estado está.
+      <br><br>
+      El nodo se identifica con <strong>tu</strong> indicativo: la configuracion vive en el propio
+      aparato, no en esta pagina.
+    </div>
+  </div>
+</body>
+</html>
