@@ -387,6 +387,11 @@ dialog .row{justify-content:flex-end}
           <button id="btnStatus" data-i18n="read_status">Leer estado</button>
           <button id="btnMute" class="gold" data-i18n="mute_toggle">Silenciar / Reactivar</button>
         </div>
+        <!-- Cuando la baliza NO sale, la razón se dice en el aviso de arriba (el nodo
+             manda `beacon.why` desde el 2026-09-16). Este texto lo explica ANTES de
+             pulsar, que es donde hace falta: el operador pulsaba "Enviar baliza" con el
+             GPS sin fijación y no pasaba nada, y parecía un fallo. -->
+        <p class="hint" data-i18n="beacon_hint">La baliza sale con la posición REAL del GPS. Si el GPS no tiene fijación, el nodo NO la manda (un rastreador no inventa una posición) y te dice por qué. La última posición conocida solo sale con el DOBLE TOQUE del botón del nodo.</p>
       </div>
       <div class="card">
         <h2 data-i18n="msg_title">Mensaje APRS</h2>
@@ -496,6 +501,8 @@ const I18N = {
     rx_monitor:"Monitor RX: OFF", clear:"Limpiar", config:"Configuración",
     read_node:"Leer del nodo", save:"Guardar en el nodo", export_cfg:"Exportar JSON",
     import_cfg:"Importar JSON", actions:"Acciones", send_beacon:"Enviar baliza",
+    beacon_hint:"La baliza sale con la posición REAL del GPS. Si el GPS no tiene fijación, el nodo NO la manda (un rastreador no inventa una posición) y te dice por qué. La última posición conocida solo sale con el DOBLE TOQUE del botón del nodo.",
+    usb:"USB", usb_rows:"Líneas", usb_pump:"Bombeo USB", usb_ok:"bien", usb_reentry:"REENTRADA",
     send_telem:"Enviar telemetría", send_telem_meta:"Enviar formato telemetría",
     read_status:"Leer estado", mute_toggle:"Silenciar / Reactivar", danger:"Zona delicada",
     danger_hint:"Estas acciones piden confirmación escrita.", reboot:"Reiniciar",
@@ -554,8 +561,8 @@ const I18N = {
     notes_title:"Avisos del configurador (no impide guardar)",
     // Textos de los avisos (ver updateNotes). En lenguaje de radioaficionado:
     // dicen QUE pasa y POR QUE, no solo "esto esta mal".
-    note_too_long_comment:"El comentario pasa de 64 caracteres y el nodo solo guarda 64: en el aire saldría cortado. Acórtalo (lo que sobra no se pierde de tu fichero, pero no se transmitiría).",
-    note_too_long_status:"El mensaje de estado pasa de 64 caracteres y el nodo solo guarda 64: se transmitiría cortado.",
+    note_too_long_comment:"El comentario pasa de 64 caracteres y el nodo solo guarda 63: en el aire saldría cortado. Acórtalo (lo que sobra no se pierde de tu fichero, pero no se transmitiría).",
+    note_too_long_status:"El mensaje de estado pasa de 64 caracteres y el nodo solo guarda 63: se transmitiría cortado.",
     note_too_long_msg:"El mensaje rápido pasa de 40 caracteres y el nodo guarda 48: mejor acortarlo, porque en un mensaje APRS el aire es corto y los demás lo leen en una pantalla pequeña.",
     note_no_call:"Falta el indicativo. Un nodo sin indicativo no es nadie en el aire: ponlo antes de guardar (con su extension si eres movil, por ejemplo EA2ABC-7).",
     note_default_call:"El indicativo sigue siendo el de fabrica (NOCALL-11). Cambialo por el tuyo: es lo que te identifica en el aire y lo que sale en aprs.fi.",
@@ -689,6 +696,8 @@ const I18N = {
     rx_monitor:"RX monitor: OFF", clear:"Clear", config:"Configuration",
     read_node:"Read from node", save:"Save to node", export_cfg:"Export JSON",
     import_cfg:"Import JSON", actions:"Actions", send_beacon:"Send beacon",
+    beacon_hint:"The beacon goes out with the REAL GPS position. With no GPS fix the node does NOT send it (a tracker never makes a position up) and it tells you why. The last known position only goes out with the node's DOUBLE button tap.",
+    usb:"USB", usb_rows:"Lines", usb_pump:"USB pump", usb_ok:"ok", usb_reentry:"RE-ENTRY",
     send_telem:"Send telemetry", send_telem_meta:"Send telemetry format",
     read_status:"Read status", mute_toggle:"Mute / Unmute", danger:"Danger zone",
     danger_hint:"These actions require typed confirmation.", reboot:"Reboot",
@@ -744,8 +753,8 @@ const I18N = {
     // Textos de los avisos nuevos (2026-09-13): seccion inerte y panel de avisos.
     inert_notice:"This section is NOT working in this firmware version. The values are stored, but the node does not use them. They are left visible so they are not lost: when Bluetooth comes back, they will still be here.",
     notes_title:"Configurator notes (they do not block saving)",
-    note_too_long_comment:"The comment is over 64 characters and the node only stores 64: it would go out cut off. Shorten it (nothing is lost from your file, but it would not be transmitted).",
-    note_too_long_status:"The status message is over 64 characters and the node only stores 64: it would be transmitted cut off.",
+    note_too_long_comment:"The comment is over 64 characters and the node only stores 63: it would go out cut off. Shorten it (nothing is lost from your file, but it would not be transmitted).",
+    note_too_long_status:"The status message is over 64 characters and the node only stores 63: it would be transmitted cut off.",
     note_too_long_msg:"The quick message is over 40 characters and the node stores 48: better to shorten it, because in an APRS message air time is short and others read it on a small screen.",
     note_no_call:"The callsign is missing. A node with no callsign is nobody on the air: fill it in before saving (with its extension if you are mobile, e.g. EA2ABC-7).",
     note_default_call:"The callsign is still the factory one (NOCALL-11). Change it to yours: it is what identifies you on the air and what shows up on aprs.fi.",
@@ -936,11 +945,11 @@ const HELP = {
     //   ejemplos y pruebas: 30°S 140°O, en mitad del Pacífico sur (ver
     //   tools/prueba_registro.js, tools/kiss_client.js y src/ax25.h).
     //   NUNCA poner aquí una posición real, ni "movida un poco".
-    es:"Tu latitud en grados decimales (por ejemplo -29.99587). En el hemisferio norte es positiva. Es la posición que se manda cuando el nodo está fijo o cuando no tiene GPS. Si tienes GPS conectado, puedes pulsar «Usar coordenadas del GPS» y se rellena sola.",
-    en:"Your latitude in decimal degrees (for example -29.99587). Positive in the northern hemisphere. This is the position sent when the node is fixed or has no GPS. With a GPS connected you can press “Use GPS coordinates” and it fills itself."},
+    es:"Tu latitud en grados decimales (por ejemplo -29.99587). En el hemisferio norte es positiva. Es la posición que manda el nodo cuando está FIJO (modo repetidor). En modo rastreador no se usa: manda la del GPS, y si no tiene fijación no manda posición. Si tienes GPS conectado, puedes pulsar «Usar coordenadas del GPS» y se rellena sola.",
+    en:"Your latitude in decimal degrees (for example -29.99587). Positive in the northern hemisphere. This is the position the node sends when it is FIXED (digipeater mode). In tracker mode it is not used: the GPS position goes out, and with no fix no position is sent at all. With a GPS connected you can press “Use GPS coordinates” and it fills itself."},
   longitude:{
-    es:"Tu longitud en grados decimales (por ejemplo -140.023517). En España es negativa. Se usa igual que la latitud: para la baliza fija y cuando no hay GPS.",
-    en:"Your longitude in decimal degrees (for example -140.023517). Negative in Spain. Used like the latitude: for the fixed beacon and when there is no GPS."},
+    es:"Tu longitud en grados decimales (por ejemplo -140.023517). En España es negativa. Se usa igual que la latitud: para la baliza del nodo fijo (modo repetidor). En modo rastreador manda la del GPS, y sin fijación no manda posición.",
+    en:"Your longitude in decimal degrees (for example -140.023517). Negative in Spain. Used like the latitude: for the fixed node's beacon (digipeater mode). In tracker mode the GPS position goes out, and with no fix no position is sent."},
   compressedPos:{
     es:"Manda la baliza del rastreador en el formato «comprimido» de APRS: ocupa unos 13 caracteres menos (más o menos un 10 % menos de aire). Todos los programas lo entienden, pero algunos visores antiguos, como findu, enseñan mal la velocidad. Está probado y funciona; déjalo apagado si no te hace falta.",
     en:"Sends the tracker beacon in the APRS “compressed” format: about 13 characters shorter (roughly 10 % less air time). Every client understands it, but some old viewers such as findu show the speed wrongly. It is tested and works; leave it off unless you need it."},
@@ -1068,7 +1077,7 @@ const HELP = {
    arreglo no servia. Con el sello a la vista, se sabe de un vistazo si lo que
    tienes delante es lo ultimo. Cambiar esta fecha CADA VEZ que se toque el
    configurador. */
-const WEB_BUILD = "2026-09-16a";
+const WEB_BUILD = "2026-09-16b";
 
 /* ================= schema ================= */
 // Rutas APRS admitidas (campo de saltos), de menos a más.
@@ -3563,7 +3572,12 @@ function onJson(msg){
       toast(msg.persisted ? t("saved") : t("saved_ro"));
     }
     if (msg.status) updateStatus(msg.status);
-    if (msg.beacon) toast(msg.beacon.tx ? t("tx_ok")+" ("+msg.beacon.code+")" : t("tx_fail")+" ("+msg.beacon.code+")", !msg.beacon.tx);
+    // La baliza contesta si salio o no, y desde el 2026-09-16 tambien el MOTIVO con
+    // palabras (`beacon.why`): en modo rastreador y sin fijacion GPS no sale nada, y
+    // el aviso tiene que decir eso y no un numero suelto (-110).
+    if (msg.beacon) toast(msg.beacon.tx
+      ? t("tx_ok")+" ("+msg.beacon.code+")"
+      : t("tx_fail")+" ("+msg.beacon.code+")"+(msg.beacon.why ? ": "+msg.beacon.why : ""), !msg.beacon.tx);
     if (msg.msg){
       const ok = !!msg.msg.tx;
       const line = t("msg_sent") + msg.msg.to + ": " + msg.msg.text;
@@ -3614,6 +3628,7 @@ function updateStatus(s){
   const r = s.radio || {};
   const sn = s.sensors || {};
   const g = s.gps || {};
+  const u = s.usb || {};
   const gpsTxt = (g.present === false)
     ? t("gps_none")
     : (g.fix ? (g.sats||0) + " sat · " + Number(g.lat).toFixed(5) + ", " + Number(g.lon).toFixed(5)
@@ -3630,6 +3645,17 @@ function updateStatus(s){
     [t("temp")+" / "+t("hum")+" / "+t("press"), (sn.wxChip ? sn.wxChip+" · " : "") + (sn.tempC!==undefined?sn.tempC.toFixed(1):"-") + "C / " + (sn.hum!==undefined?sn.hum.toFixed(0):"-") + "% / " + (sn.hPa!==undefined?sn.hPa.toFixed(1):"-") + "hPa"],
     [t("vbat")+" / "+t("ina"), (sn.vbatDivV!==undefined?sn.vbatDivV.toFixed(2):"-") + "V / " + (sn.inaBusV!==undefined?sn.inaBusV.toFixed(2):"-") + "V " + (sn.inaMa!==undefined?sn.inaMa.toFixed(0):"-") + "mA"],
     [t("display"), s.display ? t("yes") : t("no")],
+    // ★ USB (2026-09-16): los contadores que contestan a «al nodo se le muere el USB».
+    //   `bytes`/`lineas` son de siempre; `bombeo`/`colaMax`/`dentro`/`tirados` los añadió
+    //   el «Butter II» (leer el puerto DURANTE el repintado). Si el nodo es viejo y no
+    //   manda esos campos, se enseña "-" (nunca "undefined"): este configurador tiene que
+    //   seguir valiendo con un firmware anterior.
+    //   `dentro` TIENE QUE SER 0: si sale otra cosa, se dice REENTRADA y hay un fallo
+    //   (algo se ha ejecutado dentro de un repintado).
+    [t("usb"), (u.bytes!==undefined?u.bytes:"-") + " B · " + (u.lineas!==undefined?u.lineas:"-") + " " + t("usb_rows")],
+    [t("usb_pump"), "bombeo " + (u.bombeo!==undefined?u.bombeo:"-") + " · cola " + (u.colaMax!==undefined?u.colaMax:"-") +
+      " · dentro " + (u.dentro!==undefined?u.dentro:"-") + (u.dentro!==undefined ? " (" + (u.dentro===0?t("usb_ok"):t("usb_reentry")) + ")" : "") +
+      " · tirados " + (u.tirados!==undefined?u.tirados:"-")],
   ];
   updateGpsLine();
   const tbl = $("statusTable");

@@ -524,8 +524,8 @@ interminable. Son **catorce secciones**, y cada una lleva dentro sus opciones:
 
 | Opción | Qué hace |
 |---|---|
-| **Enviar baliza ahora** | Manda la baliza en ese momento |
-| **Baliza de rastreador** | Manda tu posición real (o la última conocida, si no hay fijación) |
+| **Enviar baliza ahora** | Manda la baliza en ese momento: en repetidor, la posición fija; en rastreador, tu posición **real**. Si el GPS no tiene fijación, **no manda nada** (un rastreador no inventa una posición): lo dice en pantalla y por USB |
+| **Baliza de rastreador** | Manda tu posición real. Si no hay fijación, espera unos segundos a ver si fija y, si no lo consigue, **no manda nada** y lo avisa. Para mandar la última posición conocida está el **doble toque del botón** |
 | **Enviar telemetría** | Manda los números de los sensores y la batería |
 | **Formato de telemetría** | Manda la descripción de los canales, para que los visores sepan qué es cada número |
 | **Baliza cada (min)** | Cada cuánto se manda la baliza de posición. De **15** a 240 minutos |
@@ -770,8 +770,8 @@ que se marcan aquí:
 
 | Opción | Qué hace |
 |---|---|
-| **Enviar baliza** | Manda la baliza en ese momento |
-| **Baliza rastreador** | Manda tu posición real, o la última conocida |
+| **Enviar baliza** | Manda la baliza en ese momento (en rastreador, solo si hay fijación GPS) |
+| **Baliza rastreador** | Manda tu posición real, y solo si hay fijación: sin ella no manda nada y lo avisa |
 | **Telemetria** | Manda la telemetría |
 | **Baliza cada (min)** | Cada cuánto se manda la baliza. De **15** a 240 minutos |
 | **Posicion comprimida** | Manda la posición en formato corto |
@@ -864,7 +864,7 @@ que se marcan aquí:
 | **Corte (mV)** | Tensión por debajo de la cual se duerme para proteger la batería |
 | **Despertar (mV)** | Tensión a la que vuelve a arrancar |
 | **Ver bateria** | Enseña la tensión medida |
-| **Dormir** | Apaga el aparato (pide confirmación) |
+| **Dormir** | Apaga el aparato. **En el T-Echo no pide confirmación** (la propia elección de la fila es la confirmación, decisión del 2026-09-16); en la Faketec sí |
 
 ### Remoto
 
@@ -883,8 +883,9 @@ que se marcan aquí:
 | **Borrado** | Borra todo, incluido el indicativo (pide confirmación) |
 
 Además, en el **menú principal** (antes de las secciones) hay una fila **Dormir**, que
-apaga el aparato sin entrar en la sección de energía, y una fila **Salir** arriba y otra a
-media lista.
+apaga el aparato sin entrar en la sección de energía **y sin pedir confirmación** (decisión
+del 2026-09-16: elegir esa fila ya es confirmar; dormir no borra nada y se sale con el
+reset), y una fila **Salir** arriba y otra a media lista.
 
 > **El asterisco.** En las secciones donde hay algún ajuste que **en esta pantalla no
 > hace nada** (Pantalla y Bluetooth), el menú lo marca con un **asterisco** y lo explica
@@ -917,8 +918,10 @@ media lista.
 
 ## Las acciones peligrosas piden confirmación: dos pulsaciones largas
 
-Igual que en la OLED, **Dormir**, **Reiniciar**, **Valores fabrica** y **Borrado** piden
-confirmación. Pero aquí se hace de otra forma, porque la pantalla es lenta:
+**Dormir NO está en esta lista** (decisión del 2026-09-16): si eliges la fila **Dormir**, el
+nodo se duerme y ya. Aquí se hace de otra forma que en la OLED, porque la pantalla es lenta,
+y solo lo piden las acciones que **borran o reinician**: **Reiniciar**, **Valores fabrica**
+y **Borrado**:
 
 1. La primera pulsación larga **no ejecuta nada**: la pantalla se llena con un aviso que
    pone **CONFIRMAR**, el nombre de la acción y **«pulsa largo otra vez para confirmar»**.
@@ -1274,7 +1277,8 @@ Desde la pestaña **«Registro de viaje»** del configurador:
 ## Dormir a mano desde el menú
 
 En el menú, **Energía → Dormir** (en el T-Echo hay además una fila **Dormir** en el menú
-principal). Pide confirmación, como todas las acciones peligrosas.
+principal). En la Faketec pide confirmación, como las acciones peligrosas; **en el T-Echo no:
+elegir la fila es la confirmación** (2026-09-16).
 
 **Con el cable USB puesto, el aparato NO se duerme.** Avisa en pantalla —«solo sin cable
 USB»— y vuelve a lo que estaba. Es a propósito: un nodo dormido con el cable puesto no se
