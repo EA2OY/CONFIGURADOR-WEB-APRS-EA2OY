@@ -295,8 +295,14 @@ dialog .row{justify-content:flex-end}
         <h2 data-i18n="console">Consola</h2>
         <div class="row">
           <button id="btnRxlog" data-i18n="rx_monitor">Monitor RX: OFF</button>
+          <button id="btnDiag" data-i18n="diag_off">Diagnóstico: OFF</button>
           <button id="btnClearLog" data-i18n="clear">Limpiar</button>
         </div>
+        <!-- ★ MODO DIAGNOSTICO (2026-09-16): agrupa TODAS las trazas de taller del nodo
+             (una por repintado de la tinta, los cambios de diapositiva, el menú, "fijar
+             coords"...). Apagado, la consola solo enseña lo que se pide. En modo TNC el
+             nodo lo silencia él solo, porque el puerto es del programa host. -->
+        <p class="hint" data-i18n="diag_hint">Enciende las trazas de taller del nodo (repintados de la pantalla, cambios de diapositiva, menú, «fijar coords»…). Apagado, la consola solo enseña lo que se le pide. En modo TNC el nodo lo silencia solo: el puerto es del programa host.</p>
         <div id="log"></div>
       </div>
     </section>
@@ -522,6 +528,8 @@ const I18N = {
     port_error:"Error al abrir el puerto: ", export_done:"Configuración exportada",
     import_done:"Configuración importada (pulsa Guardar para enviarla)",
     rxlog_on:"Monitor RX: ON", rxlog_off:"Monitor RX: OFF",
+    diag_on:"Diagnóstico: ON", diag_off:"Diagnóstico: OFF", diag_tnc:"Diagnóstico: ON (TNC lo silencia)",
+    diag_hint:"Enciende las trazas de taller del nodo (repintados de la pantalla, cambios de diapositiva, menú, «fijar coords»…). Apagado, la consola solo enseña lo que se le pide. En modo TNC el nodo lo silencia solo: el puerto es del programa host.",
     confirm_title:"Confirmar acción", confirm_text:"Escribe la palabra para continuar:",
     radio:"Radio", uptime:"Encendido", state:"Estado", err:"Error", rx:"RX", tx:"TX",
     digi:"Repetidos", rssi:"Último RSSI", snr:"Último SNR", mute:"Silencio",
@@ -716,6 +724,8 @@ const I18N = {
     port_error:"Error opening port: ", export_done:"Configuration exported",
     import_done:"Configuration imported (press Save to send it)",
     rxlog_on:"RX monitor: ON", rxlog_off:"RX monitor: OFF",
+    diag_on:"Diagnostics: ON", diag_off:"Diagnostics: OFF", diag_tnc:"Diagnostics: ON (TNC mutes it)",
+    diag_hint:"Turns on the node's workshop traces (screen repaints, slide changes, menu, “set coords”…). With it off, the console only shows what you ask for. In TNC mode the node mutes it by itself: the port belongs to the host program.",
     confirm_title:"Confirm action", confirm_text:"Type the word to continue:",
     radio:"Radio", uptime:"Uptime", state:"State", err:"Error", rx:"RX", tx:"TX",
     digi:"Repeated", rssi:"Last RSSI", snr:"Last SNR", mute:"Mute",
@@ -1077,7 +1087,7 @@ const HELP = {
    arreglo no servia. Con el sello a la vista, se sabe de un vistazo si lo que
    tienes delante es lo ultimo. Cambiar esta fecha CADA VEZ que se toque el
    configurador. */
-const WEB_BUILD = "2026-09-16b";
+const WEB_BUILD = "2026-09-16c";
 
 /* ================= schema ================= */
 // Rutas APRS admitidas (campo de saltos), de menos a más.
@@ -1253,6 +1263,9 @@ const SCHEMA = [
 
 /* ================= state ================= */
 let port=null, reader=null, writer=null, connected=false, rxlog=false, keepReading=false;
+// Modo diagnostico del nodo (runtime, se apaga en cada reinicio). `diagMudo` = esta
+// encendido pero el nodo lo esta callando porque el puerto es de un programa host (TNC).
+let diagOn=false, diagMudo=false;
 let lastStatus=null;   // último estado leído del nodo (GPS, módulo de radio...)
 let modoNodo=null;     // modo de trabajo (0 repetidor, 1 rastreador, 2 ambos)
 let sesiones=[];       // tracks en que se parte el registro (una por encendido)
@@ -3589,6 +3602,15 @@ function onJson(msg){
       rxlog = !!msg.radio.rxlog;
       updateRxlogBtn();
     }
+    // ★ Respuesta del MODO DIAGNOSTICO: `active` es el interruptor del usuario y
+    //   `streaming` dice si de verdad esta saliendo (el nodo lo calla en modo TNC).
+    //   El boton enseña el interruptor, y si esta encendido pero mudo, lo dice.
+    if (msg.diag){
+      diagOn = !!msg.diag.active;
+      diagMudo = diagOn && (msg.diag.streaming === false);
+      updateDiagBtn();
+      toast(diagOn ? t("diag_on") : t("diag_off"));
+    }
     busy = false;
   } else if (msg.ok===false){
     toast(msg.error || "error", true);
@@ -3614,6 +3636,11 @@ function updateLogWarn(){
 }
 function updateStatus(s){
   lastStatus = s;
+  // ★ MODO DIAGNOSTICO (2026-09-16): el `status` trae `diag` = "esta saliendo de verdad"
+  //   (encendido y sin TNC encima). Si sale, el interruptor esta puesto. Si NO sale no se
+  //   toca nada: puede estar encendido y callado por el TNC, y el status no distingue esos
+  //   dos casos (el que lo distingue es la respuesta del comando `diag`).
+  if (s && s.diag === true && !diagOn) { diagOn = true; diagMudo = false; updateDiagBtn(); }
   // El texto bajo el icono pasa a decir lo que es este nodo de verdad (version
   // del firmware que lleva y modulo de radio). Antes de conectar pone solo la
   // placa, porque todavia no sabemos nada.
@@ -3683,6 +3710,11 @@ function setConnUI(on){
 function updateRxlogBtn(){
   $("btnRxlog").textContent = rxlog ? t("rxlog_on") : t("rxlog_off");
 }
+// ★ El boton del MODO DIAGNOSTICO (2026-09-16). Enseña el interruptor del usuario; si el
+//   nodo lo esta callando por estar en modo TNC, lo dice en vez de mentir con un ON.
+function updateDiagBtn(){
+  $("btnDiag").textContent = diagOn ? (diagMudo ? t("diag_tnc") : t("diag_on")) : t("diag_off");
+}
 function applyStaticI18n(){
   document.querySelectorAll("[data-i18n]").forEach(el=>{
     el.textContent = t(el.getAttribute("data-i18n"));
@@ -3729,7 +3761,7 @@ $("btnLang").onclick = ()=>{
   const panel = currentPanel();
   lang = (lang==="es") ? "en" : "es";
   localStorage.setItem("ea2oy_lang", lang);
-  applyStaticI18n(); buildTabs(); buildForm(); updateRxlogBtn();
+  applyStaticI18n(); buildTabs(); buildForm(); updateRxlogBtn(); updateDiagBtn();
   // El idioma tambien cambia el aviso de movil/tablet, y de paso vuelve a poner el
   // titulo (tooltip) del boton Conectar apagado en el idioma nuevo.
   aplicarAvisoSerial();
@@ -3740,6 +3772,7 @@ $("btnLang").onclick = ()=>{
 };
 $("btnClearLog").onclick = ()=>{ $("log").textContent = ""; };
 $("btnRxlog").onclick = ()=>{ cmdJson({cmd:"radio", rxlog: !rxlog}); };
+$("btnDiag").onclick = ()=>{ cmdJson({cmd:"diag", diag:{active: !diagOn}}); };
 $("btnRead").onclick = ()=> cmdJson({cmd:"get"});
 $("btnSave").onclick = async ()=>{
   const cfg = collectConfig();
@@ -4028,6 +4061,7 @@ aplicarAvisoSerial();
 buildTabs();
 buildForm();
 updateRxlogBtn();
+updateDiagBtn();
 initVolverArriba();   // el boton de "volver arriba" (aparece al desplazarse)
 </script>
 </body>

@@ -1393,8 +1393,15 @@ USB. Tiene cuatro pestañas: **Estado en vivo**, **Configuración**, **Acciones*
 
 ## Qué se puede hacer desde él
 
-- **Ver el estado en vivo** del nodo, y una **consola** donde se ve lo que va pasando (y
-  donde se pueden escribir órdenes, para quien las conozca).
+- **Ver el estado en vivo** del nodo, y una **consola** donde se ve lo que el nodo contesta
+  y lo que avisa (las órdenes se mandan con los botones de la página; en la consola no se
+  escribe).
+- **Encender y apagar el modo diagnóstico** con el botón **Diagnóstico**. Apagado (como viene),
+  la consola solo enseña lo que se le pide; encendido, el nodo cuenta además lo que va haciendo
+  por dentro (cada repintado de la pantalla, los cambios de diapositiva, el menú, «fijar
+  coords»…), que es lo que hace falta cuando algo no va y hay que mirarlo con lupa. **Es de
+  usar y tirar**: se apaga solo al reiniciar el nodo, y en modo módem (TNC) el nodo lo silencia
+  él solo, porque el puerto es entonces del programa de APRS.
 - **Leer la configuración de verdad** que tiene el nodo y **rellenar el formulario** con
   lo que necesites: la estación (tu indicativo, el comentario), las rutas y saltos, las
   balizas, el repetidor, la radio, los sensores y la telemetría, el rastreador, la
@@ -1406,6 +1413,9 @@ USB. Tiene cuatro pestañas: **Estado en vivo**, **Configuración**, **Acciones*
 - **Acciones sueltas**: mandar una baliza, mandar telemetría, mandar el formato de
   telemetría, leer el estado y **silenciar o reactivar** la radio.
 - **Mandar mensajes**, **boletines** y **objetos** sin escribir comandos.
+- **Cambiar los perfiles de uso**: hay una sección **«Perfiles de uso»** con la tabla de los
+  cuatro (SSID, tiempos, metros e **icono del mapa**), con el mismo selector de iconos de
+  siempre. Así no hace falta ir al menú del T-Echo para tocar los perfiles.
 - **Descargar el registro de viaje**, verlo en el mapa y exportarlo a GPX, KML o CSV.
 - La **zona delicada**: reiniciar, volver a valores de origen (borra la configuración,
   **no** reinicia), borrado total y modo de grabación. **Todas piden confirmación
@@ -1413,9 +1423,6 @@ USB. Tiene cuatro pestañas: **Estado en vivo**, **Configuración**, **Acciones*
 
 ## Qué NO se puede hacer desde él
 
-- **No se pueden cambiar los perfiles de uso** (ni el número del indicativo de cada uno,
-  ni sus tiempos, ni su icono del mapa). Desde la web solo se elige **cuál está activo**.
-  Los detalles de cada perfil se tocan en el menú del T-Echo.
 - **No se puede probar el zumbador ni la vibración.** Son avisos automáticos: no tienen
   ajustes ni botón de prueba en la web.
 - **La sección de Bluetooth no hace nada.** Está a la vista, pero el Bluetooth está fuera
