@@ -916,22 +916,31 @@ reset), y una fila **Salir** arriba y otra a media lista.
   cuatro iconos y enseña el nombre y el par de códigos APRS, por ejemplo
   **`Icono: Persona (/[)`**.
 
-## Las acciones peligrosas piden confirmación: dos pulsaciones largas
+## Las acciones peligrosas piden confirmación: dos pulsaciones cortas
 
 **Dormir NO está en esta lista** (decisión del 2026-09-16): si eliges la fila **Dormir**, el
 nodo se duerme y ya. Aquí se hace de otra forma que en la OLED, porque la pantalla es lenta,
 y solo lo piden las acciones que **borran o reinician**: **Reiniciar**, **Valores fabrica**
 y **Borrado**:
 
-1. La primera pulsación larga **no ejecuta nada**: la pantalla se llena con un aviso que
-   pone **CONFIRMAR**, el nombre de la acción y **«pulsa largo otra vez para confirmar»**.
-2. Hay que **volver a pulsar largo**, dentro de los **15 segundos** siguientes. Entonces
-   se ejecuta.
+1. La primera pulsación **corta** del físico **no ejecuta nada**: la pantalla se llena con un
+   aviso que pone **CONFIRMAR**, el nombre de la acción y **«pulsa corto otra vez para
+   confirmar»**.
+2. Hay que **volver a pulsar corto**, dentro de los **15 segundos** siguientes. Entonces se
+   ejecuta. Deja pasar medio segundo entre las dos, o el nodo lo leerá como un **doble toque**
+   (que dentro del menú no hace nada: te quedarás en el aviso).
 3. **Una pulsación larga mientras está el aviso CANCELA**: no hace nada y vuelve a la
    lista. Si te has equivocado, esa es la salida.
 4. Mientras el aviso está en pantalla, **el táctil no hace nada** (para que no muevas el
    cursor sin querer).
 5. Si dejas pasar los 15 segundos, el aviso desaparece solo y no pasa nada.
+
+> **OJO: esto estuvo mal escrito hasta el 2026-09-16.** La pantalla y este manual decían
+> «pulsa **largo** otra vez», copiado de la OLED, donde el gesto que confirma **sí** es el
+> largo. En el T-Echo el mapa es el contrario —**corto = entrar y confirmar; largo = volver
+> atrás**—, así que el aviso mandaba hacer justo el gesto que cancela (y se contradecía con su
+> propia última línea, «físico largo: cancelar»). Lo cazó el operador: «mantengo pulsado y solo
+> sale del menú». Ya dice lo que hace.
 
 ## El menú se cierra solo a los 15 segundos
 
@@ -1589,9 +1598,11 @@ largo = volver atrás**. Y dos toques seguidos del físico, fuera del menú, man
 baliza a mano.
 
 **He pulsado largo en «Borrado» y no ha hecho nada.**
-Es lo correcto: las acciones peligrosas piden **dos pulsaciones largas**. La primera solo
-avisa. Vuelve a pulsar largo en la misma opción antes de que se acabe el tiempo (15
-segundos en el T-Echo; 3 en la Faketec).
+Ojo con el gesto, que aquí cada placa tiene el suyo: **en el T-Echo las acciones peligrosas
+piden dos pulsaciones CORTAS** (el largo es «volver atrás», así que manteniéndolo sales de la
+lista). La primera pulsación corta solo avisa, con la pantalla **CONFIRMAR**; vuelve a pulsar
+**corto** en la misma opción antes de que se acabe el tiempo (15 segundos). En la **Faketec**
+(OLED) es al revés: allí **sí** son dos pulsaciones **largas**, y el aviso dura 3 segundos.
 
 **He mandado el nodo a dormir y no responde.**
 Está dormido, no roto. **En el T-Echo hay que pulsar el botón de RESET** para
