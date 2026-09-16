@@ -91,24 +91,27 @@ altitud mínima y máxima, y duración.
 
 ### 💾 Los binarios de `uf2/`, con fecha y SHA-256
 
-> 🔎 **El contador de compilación NO subió**: sigue en **`b9`**, así que **el binario de hoy y el de
-> ayer se llaman igual y los dos contestan `b9` al preguntarles por USB**. Lo único que los
-> distingue es la **fecha** y el **SHA-256** de esta tabla (los seis ficheros que hay en [`uf2/`](uf2)):
+> ✅ **Cada binario dice lo que lleva (contador de compilación arreglado el 2026-09-16)**: el
+> número sube **cuando cambia el código**, así que el que contesta el nodo por USB
+> (`1.0alpha b13`) identifica el firmware, y coincide con el nombre del fichero. Hasta esa noche
+> el contador estuvo clavado en `b9` (un fallo del propio contador), así que **si tienes
+> descargado un `..._b9_...`, es el mismo firmware que el `b13` con el número viejo**. La fecha y
+> el **SHA-256** de esta tabla sirven para comprobar lo que te has bajado (los seis de [`uf2/`](uf2)):
 
 | Fichero | Fecha | Bytes | SHA-256 |
 |---|---|---|---|
-| `KachoSystem_v1.0alpha_b9_Faketec_HT-RA62_433.uf2` | 2026-09-16 | 749568 | `85344B0256AE2B29910C329FCAC11608686346CA39F7E04D155C6717A7989345` |
-| `KachoSystem_v1.0alpha_b9_Faketec_E22P-433M30S.uf2` | 2026-09-16 | 749568 | `C6957FDB8AD479CFE66681CE9EB18EE07ED26305892D19D9496C3ABA0879F912` |
-| `KachoSystem_v1.0alpha_b9_LilyGO_T-Echo_S140v7.uf2` | 2026-09-16 | 743424 | `B64AAE877B6AFCA97BB74CBF5F046D8EA886595F3E8FA1B9ED1F3E6E6673A68B` |
-| `KachoSystem_v1.0alpha_b9_LilyGO_T-Echo-Plus_S140v7.uf2` | 2026-09-16 | 740352 | `E822DE8D37076661DEB03ACFCE489193CB109756C1E3758B5DB5D894D681A93D` |
+| `KachoSystem_v1.0alpha_b13_Faketec_HT-RA62_433.uf2` | 2026-09-16 | 749568 | `0B9E1FE9E52974EEDAB852E35CF2F17FF90AF4D91D28CB2B82DAA828604F097A` |
+| `KachoSystem_v1.0alpha_b13_Faketec_E22P-433M30S.uf2` | 2026-09-16 | 749568 | `B65B79A3596B1906AE16AEC51FEEC1C1C57D162169CF294B1D61450C6DDFE69F` |
+| `KachoSystem_v1.0alpha_b13_LilyGO_T-Echo_S140v7.uf2` | 2026-09-16 | 743424 | `31148799C9140770AC33BF861F96868C38B29739C251FED5237A0A2F928ADB2D` |
+| `KachoSystem_v1.0alpha_b13_LilyGO_T-Echo-Plus_S140v7.uf2` | 2026-09-16 | 740352 | `1F8763492C799DCB3C0F4B7FEAACC6A710CD3B062BE3C9BDE641155F3615F65E` |
 | `KachoSystem_v1.0alpha_b3_LilyGO_T-Echo.uf2` | 2026-09-14 | 599552 | `5F06A6F660D24F62BD8FF539FEEB08291EBE7E64C67E0FEA5C4DB18CB8661E78` |
 | `KachoSystem_v1.0alpha_b3_LilyGO_T-Echo-Plus.uf2` | 2026-09-14 | 599552 | `E7A121F0442A8500617B335F3432340C8DB39E135DBC3F35961035B8AF903B3F` |
 
-Las cuatro filas **b9** se recompilaron el **2026-09-16** desde el código de
+Las cuatro filas **b13** se recompilaron el **2026-09-16** desde el código de
 [EA2OY/EA2OY-APRS-SYSTEM](https://github.com/EA2OY/EA2OY-APRS-SYSTEM); las dos **b3** son del
 **2026-09-14** y se dejan tal cual (son las que van en un T-Echo con cargador de arranque S140
-**versión 6**, para el que no hay build b9). Para comprobar la huella en tu ordenador (Windows,
-PowerShell): `Get-FileHash .\KachoSystem_v1.0alpha_b9_LilyGO_T-Echo_S140v7.uf2 -Algorithm SHA256`
+**versión 6**, para el que no hay build b13). Para comprobar la huella en tu ordenador (Windows,
+PowerShell): `Get-FileHash .\KachoSystem_v1.0alpha_b13_LilyGO_T-Echo_S140v7.uf2 -Algorithm SHA256`
 
 ## 📘 Documentación y firmware
 
