@@ -247,12 +247,22 @@ function pon(txt, clase){
   if (clase) estado.className = clase;
 }
 
-/* Los identificadores de USB que usan estas placas (Adafruit/nRF52):
-   0x239A/0x00B3 = bootloader UF2 · 0x239A/0x802A = aplicacion (nuestro firmware) */
+/* Los identificadores de USB que usan estas placas (Adafruit/nRF52).
+   ★ CORREGIDO EL 2026-09-16 (noche) CON PRUEBAS, porque estaba AL REVES:
+     0x239A/0x0029 = CARGADOR UF2 (la placa esta en modo grabacion y sale TECHOBOOT)
+     0x239A/0x00B3 = NUESTRA APLICACION (el firmware corriendo: se presenta como
+                     "KACHO_TECHO_433" y contesta el CLI)
+   Como se comprobo, para que nadie lo vuelva a cambiar a ojo:
+     - Con el firmware corriendo, el aparato en el bus es 239A:00B3 y su cadena de
+       producto es "KACHO_TECHO_433" (sale de boards\techo-nrf52840-s140v7.json).
+     - Tras mandar `dfu confirm`, con la unidad TECHOBOOT ya montada, el UNICO aparato
+       en el bus era 239A:0029.
+   El fallo que esto arregla era serio: como la aplicacion tambien figuraba como "00B3",
+   el detector daba por bueno el modo grabacion con la placa todavia arrancada. */
 const USB = {
-  "239a:00b3": "bootloader UF2 (modo grabacion)",
-  "239a:802a": "aplicacion (el firmware esta corriendo)",
-  "239a:8029": "aplicacion (otra placa nRF52)"
+  "239a:0029": "CARGADOR UF2 (modo grabacion)",
+  "239a:00b3": "nuestra aplicacion (KACHO_TECHO_433)",
+  "239a:802a": "aplicacion nRF52 (familia Adafruit)"
 };
 
 btn.onclick = async ()=>{
@@ -340,8 +350,8 @@ btn.onclick = async ()=>{
                 'tenga abierto. Prueba a cerrar el configurador y repetir.');
   } else {
     lineas.push("");
-    lineas.push('No reconozco este identificador. Si el puerto termina en <code>00B3</code> es ' +
-                'el bootloader; si termina en <code>802A</code>, la aplicacion.');
+    lineas.push('No reconozco este identificador. Si el puerto termina en <code>0029</code> es ' +
+                'el CARGADOR (modo grabacion); si termina en <code>00B3</code>, nuestra aplicacion.');
   }
   pon(lineas.join("\n"), "");
 };
@@ -396,7 +406,10 @@ btn1200.onclick = async ()=>{
     try{ lista = await navigator.serial.getPorts(); }catch(e){ break; }
     const boot = lista.find(p=>{
       const i = p.getInfo ? p.getInfo() : {};
-      return i.usbVendorId === 0x239A && i.usbProductId === 0x00B3;   // bootloader UF2
+      // ★ 0x0029 es el CARGADOR (ver la tabla USB de arriba). Antes ponia 0x00B3, que es
+      //   NUESTRA APLICACION: el detector decia «¡ha funcionado!» con la placa todavia
+      //   arrancada. Corregido el 2026-09-16 con la prueba hecha en el telefono.
+      return i.usbVendorId === 0x239A && i.usbProductId === 0x0029;   // cargador UF2
     });
     if (boot){
       pon1200("<b>¡Ha funcionado!</b> La placa ha entrado en modo grabación: ha aparecido una " +
