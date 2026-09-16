@@ -89,6 +89,27 @@ altitud mínima y máxima, y duración.
 | [`Manual_Kacho_System.pdf`](Manual_Kacho_System.pdf) | El manual de uso, para tenerlo a mano |
 | [`README_configurador.md`](README_configurador.md) | Notas del configurador y sus comprobadores |
 
+### 💾 Los binarios de `uf2/`, con fecha y SHA-256
+
+> 🔎 **El contador de compilación NO subió**: sigue en **`b9`**, así que **el binario de hoy y el de
+> ayer se llaman igual y los dos contestan `b9` al preguntarles por USB**. Lo único que los
+> distingue es la **fecha** y el **SHA-256** de esta tabla (los seis ficheros que hay en [`uf2/`](uf2)):
+
+| Fichero | Fecha | Bytes | SHA-256 |
+|---|---|---|---|
+| `KachoSystem_v1.0alpha_b9_Faketec_HT-RA62_433.uf2` | 2026-09-16 | 749568 | `85344B0256AE2B29910C329FCAC11608686346CA39F7E04D155C6717A7989345` |
+| `KachoSystem_v1.0alpha_b9_Faketec_E22P-433M30S.uf2` | 2026-09-16 | 749568 | `C6957FDB8AD479CFE66681CE9EB18EE07ED26305892D19D9496C3ABA0879F912` |
+| `KachoSystem_v1.0alpha_b9_LilyGO_T-Echo_S140v7.uf2` | 2026-09-16 | 743424 | `B64AAE877B6AFCA97BB74CBF5F046D8EA886595F3E8FA1B9ED1F3E6E6673A68B` |
+| `KachoSystem_v1.0alpha_b9_LilyGO_T-Echo-Plus_S140v7.uf2` | 2026-09-16 | 740352 | `E822DE8D37076661DEB03ACFCE489193CB109756C1E3758B5DB5D894D681A93D` |
+| `KachoSystem_v1.0alpha_b3_LilyGO_T-Echo.uf2` | 2026-09-14 | 599552 | `5F06A6F660D24F62BD8FF539FEEB08291EBE7E64C67E0FEA5C4DB18CB8661E78` |
+| `KachoSystem_v1.0alpha_b3_LilyGO_T-Echo-Plus.uf2` | 2026-09-14 | 599552 | `E7A121F0442A8500617B335F3432340C8DB39E135DBC3F35961035B8AF903B3F` |
+
+Las cuatro filas **b9** se recompilaron el **2026-09-16** desde el código de
+[EA2OY/EA2OY-APRS-SYSTEM](https://github.com/EA2OY/EA2OY-APRS-SYSTEM); las dos **b3** son del
+**2026-09-14** y se dejan tal cual (son las que van en un T-Echo con cargador de arranque S140
+**versión 6**, para el que no hay build b9). Para comprobar la huella en tu ordenador (Windows,
+PowerShell): `Get-FileHash .\KachoSystem_v1.0alpha_b9_LilyGO_T-Echo_S140v7.uf2 -Algorithm SHA256`
+
 ## 📘 Documentación y firmware
 
 | | |
