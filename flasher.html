@@ -162,27 +162,23 @@
             <td><a href="uf2/KachoSystem_v1.0alpha_b68_Faketec_HT-RA62_433.uf2">KachoSystem_v1.0alpha_b68_Faketec_HT-RA62_433.uf2</a></td></tr>
         <tr><td>Faketec / ProMicro + <b>E22P-433M30S</b></td>
             <td><a href="uf2/KachoSystem_v1.0alpha_b68_Faketec_E22P-433M30S.uf2">KachoSystem_v1.0alpha_b68_Faketec_E22P-433M30S.uf2</a></td></tr>
-        <tr><td><b>LilyGO T-Echo</b>, con el cargador de arranque (SoftDevice) <b>S140 versión 6</b></td>
-            <td><a href="uf2/KachoSystem_v1.0alpha_b68_LilyGO_T-Echo_S140v6.uf2">KachoSystem_v1.0alpha_b68_LilyGO_T-Echo_S140v6.uf2</a></td></tr>
-        <tr><td><b>LilyGO T-Echo Plus</b>, con el cargador de arranque (SoftDevice) <b>S140 versión 6</b></td>
-            <td><a href="uf2/KachoSystem_v1.0alpha_b68_LilyGO_T-Echo-Plus_S140v6.uf2">KachoSystem_v1.0alpha_b68_LilyGO_T-Echo-Plus_S140v6.uf2</a></td></tr>
-        <tr><td><b>LilyGO T-Echo</b>, con el cargador de arranque (SoftDevice) <b>S140 v7</b></td>
+        <tr><td><b>LilyGO T-Echo</b></td>
             <td><a href="uf2/KachoSystem_v1.0alpha_b68_LilyGO_T-Echo_S140v7.uf2">KachoSystem_v1.0alpha_b68_LilyGO_T-Echo_S140v7.uf2</a></td></tr>
-        <tr><td><b>LilyGO T-Echo Plus</b>, con el cargador de arranque (SoftDevice) <b>S140 v7</b></td>
+        <tr><td><b>LilyGO T-Echo Plus</b></td>
             <td><a href="uf2/KachoSystem_v1.0alpha_b68_LilyGO_T-Echo-Plus_S140v7.uf2">KachoSystem_v1.0alpha_b68_LilyGO_T-Echo-Plus_S140v7.uf2</a></td></tr>
       </table>
       <div class="aviso ok">
-        <b>¿Qué versión lleva tu T-Echo?</b> Entra en modo grabación (paso 2) y mira el fichero
-        <code>INFO_UF2.TXT</code> de la unidad. Si pone <code>SoftDevice: S140 version 7.x</code>,
-        el fichero que te toca es el <b>S140v7</b>. Si pone <code>6.1.1</code>, el tuyo es el
-        <b><code>..._S140v6.uf2</code></b>. <b>No son intercambiables</b>: grabar el que
-        no toca pisa los últimos 4 KB del cargador y deja la radio inservible.
+        <b>Los T-Echo son solo para el cargador de arranque S140 versión 7.</b> Entra en modo
+        grabación (paso 2) y mira el fichero <code>INFO_UF2.TXT</code> de la unidad: tiene que
+        poner <code>SoftDevice: S140 version 7.x</code>. Si pone <code>6.1.1</code>, ese aparato
+        es de los primeros y <b>hay que subirle el cargador antes</b> (con el fichero completo que
+        trae el SoftDevice dentro); este fichero, tal cual, no vale para él.
       </div>
       <div class="aviso">
-        <b>Ahora hay versión nueva para los dos cargadores</b>, así que el T-Echo y el T-Echo Plus
-        (con cargador v6 o v7) tienen su fichero con <b>todo</b> lo que lleva el firmware: el menú y
-        las escenas de la pantalla de tinta electrónica, y los avisos de vibración y sonido del Plus.
-        Elige el de <b>tu placa y tu cargador</b>, y ninguno más.
+        <b>¿Qué fichero es el tuyo?</b> El de <b>tu placa</b> y ninguno más: el del T-Echo y el
+        del T-Echo Plus no son intercambiables con los de las Faketec, y grabar el de otra placa
+        deja el aparato sin arrancar. Si te equivocas, se vuelve a grabar el correcto por el mismo
+        método (el modo grabación siempre funciona).
       </div>
       <div class="aviso ok">
         <b>El firmware no trae ningún indicativo grabado.</b> Cada nodo se identifica con la
@@ -214,8 +210,8 @@
     <p><b>¿Y si me equivoco de fichero?</b> Entre los dos T-Echo (normal y Plus) no pasa nada: el
     pinout es el mismo. Entre un T-Echo y una Faketec, la placa no arrancará: vuelve a poner el
     fichero correcto por el mismo método (el modo grabación siempre funciona, aunque el firmware esté
-    roto). <b>Lo que sí importa</b> es no cruzar los ficheros de <b>versión 6</b> y <b>versión 7</b>
-    del cargador de arranque: mira el <code>INFO_UF2.TXT</code> antes de copiar.</p>
+    roto). <b>Lo que sí importa</b> es que el T-Echo sea de <b>cargador S140 versión 7</b>: mira el
+    <code>INFO_UF2.TXT</code> antes de copiar.</p>
     <p><b>¿Se puede volver al firmware que traía?</b> Sí: es el fichero que copiaste en el paso 1.
     Se copia igual que cualquier otro.</p>
     <p><b>¿Puedo grabar por el puerto serie, sin tocar la placa?</b> En las Faketec sí, con el
