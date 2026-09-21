@@ -317,6 +317,24 @@ dialog .row{justify-content:flex-end}
           <button id="btnImport" data-i18n="import_cfg">Importar JSON</button>
           <input type="file" id="fileImport" accept="application/json" style="display:none">
         </div>
+        <!-- ★ SELECTOR DE PLACA (2026-09-21). POR QUE ESTA AQUI Y NO EN EL FORMULARIO:
+             la placa NO es un ajuste del nodo (no viaja en la configuracion ni se guarda
+             en su flash). Es un dato de ESTE aparato, y sirve para que el boton de
+             "valores recomendados" acierte: los umbrales de bateria no son los mismos en
+             un T-Echo que en una Faketec, y antes se recomendaban los de la Faketec a
+             todo el mundo (en un T-Echo eso apaga el nodo con la bateria a media carga).
+             Se rellena solo al conectar (el nodo dice cual es en `status.board`), y el
+             usuario puede cambiarlo a mano; su eleccion se recuerda en este navegador. -->
+        <div class="row" style="margin-top:10px">
+          <label for="selPlaca" data-i18n="placa_l" style="min-width:0">Aparato</label>
+          <select id="selPlaca" style="max-width:260px">
+            <option value="" data-i18n="placa_auto">(lo pregunto al nodo)</option>
+            <option value="T-Echo" data-i18n="placa_techo">LilyGO T-Echo / T-Echo Plus</option>
+            <option value="Faketec HT-RA62" data-i18n="placa_faketec">Faketec + HT-RA62 (SX1262)</option>
+            <option value="Faketec E22P" data-i18n="placa_e22p">Faketec + E22P-433M30S</option>
+          </select>
+        </div>
+        <p class="hint" data-i18n="placa_hint">Con esto, los valores recomendados se ponen los de tu aparato (sobre todo los voltajes de batería). El que quiera otros, los cambia a mano: el nodo acepta lo que le mandes.</p>
         <p class="hint" data-i18n="preset_hint">Rellena el formulario con valores sensatos para empezar (indicativo y coordenadas hay que ponerlos a mano). Nada se envía al nodo hasta que pulses Guardar.</p>
         <p class="hint" data-i18n="rf_hint">Los cambios de radio (frecuencia, SF, ancho de banda, potencia) se aplican al reiniciar el nodo.</p>
       </div>
@@ -676,6 +694,16 @@ const I18N = {
     preset_btn:"Poner valores recomendados",
     preset_done:"Valores recomendados puestos en el formulario. Revísalos y pulsa «Guardar en el nodo».",
     preset_hint:"Rellena el formulario con valores sensatos para empezar (indicativo y coordenadas hay que ponerlos a mano). Nada se envía al nodo hasta que pulses Guardar.",
+    // ★ SELECTOR DE PLACA (2026-09-21): la placa no es un ajuste del nodo; sirve para que
+    //   los valores recomendados sean los de SU aparato (los voltajes de batería no son
+    //   iguales en un T-Echo que en una Faketec).
+    placa_l:"Aparato",
+    placa_auto:"(lo pregunto al nodo)",
+    placa_techo:"LilyGO T-Echo / T-Echo Plus",
+    placa_faketec:"Faketec + HT-RA62 (SX1262)",
+    placa_e22p:"Faketec + E22P-433M30S",
+    placa_hint:"Con esto, los valores recomendados se ponen los de tu aparato (sobre todo los voltajes de batería). El que quiera otros, los cambia a mano: el nodo acepta lo que le mandes.",
+    placa_detectada:"Aparato detectado en el nodo:",
     revert_btn:"Descartar cambios",
     revert_done:"Formulario releído del nodo.",
     reboot_badge:"Se aplica al reiniciar",
@@ -870,6 +898,13 @@ const I18N = {
     preset_btn:"Fill in recommended values",
     preset_done:"Recommended values placed in the form. Review them and press “Save to node”.",
     preset_hint:"Fills the form with sensible starting values (callsign and coordinates must be entered by hand). Nothing is sent to the node until you press Save.",
+    placa_l:"Device",
+    placa_auto:"(ask the node)",
+    placa_techo:"LilyGO T-Echo / T-Echo Plus",
+    placa_faketec:"Faketec + HT-RA62 (SX1262)",
+    placa_e22p:"Faketec + E22P-433M30S",
+    placa_hint:"With this, the recommended values are the ones for your device (above all the battery voltages). Anyone who wants others can change them by hand: the node accepts whatever you send it.",
+    placa_detectada:"Device detected on the node:",
     revert_btn:"Discard changes",
     revert_done:"Form re-read from the node.",
     reboot_badge:"Applies after reboot",
@@ -941,9 +976,9 @@ const HELP = {
   msgText:{
     es:"Un mensaje corto guardado en el nodo, para enviarlo desde la propia pantalla con un toque (por ejemplo «estoy de ruta»). Desde el configurador puedes mandar mensajes escribiéndolos, esto es solo el atajo de la pantalla.",
     en:"A short message stored in the node so it can be sent from the screen with one touch (for example “on the road”). From the configurator you can send messages by typing them; this is just the screen shortcut."},
-  tocall:{
-    es:"Identificador del aparato. Identifica al FIRMWARE, no a ti: todos los nodos que lleven este firmware deben poner el mismo. El valor recomendado es APZFKT, del rango experimental que las normas del registro reservan a los proyectos personales no publicados. Si lo dejas vacío se usará APLRG1, y entonces aprs.fi atribuirá tu nodo al firmware de otra persona: eso es falso. Si algún día publicas tu firmware, lo correcto es pedir un identificador propio en el registro de aprs.org.",
-    en:"Device identifier. It identifies the FIRMWARE, not you: every node running this firmware should use the same one. The recommended value is APZFKT, from the experimental range that the registry rules reserve for unpublished personal projects. If you leave it empty, APLRG1 is used, and then aprs.fi will attribute your node to someone else's firmware: that is false. If you ever publish your firmware, the right thing is to request your own identifier from the aprs.org registry."},
+  // ★ AQUI ESTABA LA AYUDA DEL TOCALL, Y SE QUITO CON EL CAMPO (2026-09-21): el tocall
+  //   identifica al firmware y ya no se elige desde esta web. El firmware trae APL2OY.
+  //   Se deja dicho para que nadie se pase media hora buscando el texto que falta.
   beaconInterval:{
     es:"Cada cuánto manda el nodo su baliza de posición cuando está fijo (repetidor). Lo razonable son 15 a 30 minutos: las guías de APRS piden no balizar más a menudo para no llenar el canal. De fábrica viene en 30 minutos, que en un repetidor fijo es de sobra (la posición no cambia); el mínimo que acepta el firmware son 15.",
     en:"How often the node sends its position beacon when it is fixed (digipeater). 15 to 30 minutes is reasonable: APRS guidance asks not to beacon more often, to keep the channel clear. It comes set to 30 minutes from the factory, which is plenty for a fixed digipeater (the position does not change); the minimum the firmware accepts is 15."},
@@ -1112,8 +1147,16 @@ const SCHEMA = [
      hint:{es:"Lo manda en los avisos de estado (máx. 64)",en:"Sent in status packets (max 64)"}},
    {key:"msgText", type:"text", maxlen:40, label:{es:"Mensaje rápido guardado",en:"Saved quick message"},
      hint:{es:"Se envía desde la pantalla del nodo al último escuchado",en:"Sent from the node screen to the last heard station"}},
-   {key:"tocall", type:"text", maxlen:6, label:{es:"Identificador de dispositivo (tocall)",en:"Device identifier (tocall)"},
-     hint:{es:"APLRG1 = aparece como el iGate de Ricardo; APZFKT = propio",en:"APLRG1 = shows as Ricardo's iGate; APZFKT = our own"}},
+   // ★ EL CAMPO DEL TOCALL SE QUITO DE AQUI (2026-09-21, decision del operador).
+   //   POR QUE: el tocall identifica al FIRMWARE, no al usuario, y tiene que ser el mismo
+   //   en todos los nodos que lleven Kacho System. Dejarlo en el formulario solo servia
+   //   para que cada uno pusiera el suyo (o lo dejara en el valor de otro firmware). Ahora
+   //   el nodo sale de fabrica con APL2OY (ver DigiConfig::tocall en el firmware) y desde
+   //   esta web NO se puede cambiar: al no estar en el esquema, `collectConfig()` no lo
+   //   manda y el nodo conserva el que tenga guardado.
+   //   OJO PARA QUIEN LO LEA EN EL FUTURO: esto NO borra el tocall de un nodo ya grabado.
+   //   Si un nodo tiene APLRG1 guardado y hay que cambiarselo, se hace por el cable con
+   //   `set tocall APL2OY` (consola del nodo), no desde aqui.
  ]},
  {id:"rutas", fields:[
    {key:"pathDigi", type:"text", list:PATHS, label:{es:"Saltos como repetidor",en:"Hops as digipeater"},
@@ -2528,17 +2571,76 @@ function updateSymbolMini(){
   symMiniEl.title = textoElegido();
 }
 
+/* ================= el aparato (placa) =================
+   ★ POR QUE EXISTE ESTO (2026-09-21): los umbrales de batería NO son los mismos en un
+   T-Echo que en una Faketec, y el configurador no tenía forma de saber qué aparato tenía
+   delante: recomendaba los de la Faketec a todo el mundo. En un T-Echo (celda LiPo 1S)
+   eso apaga el nodo con la batería a media carga.
+   DE DONDE SALE EL VALOR: primero de lo que diga el nodo (`status.board`, que el firmware
+   publica desde el 2026-09-21); si el usuario lo cambia a mano, manda su elección y se
+   recuerda en ESTE navegador (no es un ajuste del nodo: no viaja en la configuración).
+   ESTA TABLA TIENE QUE COINCIDIR CON `config.h` DEL FIRMWARE. Los comentarios de allí
+   dicen "NO CAMBIAR" en los de las Faketec, y los del T-Echo son los que el operador
+   acordó con el criterio del firmware del T-Echo (3200 apaga / 3400 despierta). */
+const PLACAS = {
+  "T-Echo":          { cut: 3200, wake: 3400 },
+  "Faketec HT-RA62": { cut: 3400, wake: 3710 },
+  "Faketec E22P":    { cut: 3500, wake: 3710 },
+};
+const PLACA_PREF = "ea2oy_placa";   // eleccion del usuario, recordada en este navegador
+
+function placaElegida(){
+  const el = $("selPlaca");
+  const v = el ? el.value : "";
+  if (v && PLACAS[v]) return v;                       // elegida a mano: manda
+  const d = (lastStatus && lastStatus.board) || "";    // lo que dice el nodo
+  if (d && PLACAS[d]) return d;
+  return "";                                          // no sabemos: no se toca nada
+}
+
+// Pinta el selector con lo que diga el nodo, SI el usuario no ha elegido a mano.
+// Se llama cada vez que llega un `status` (ver updateStatus).
+function aplicaPlacaDelNodo(){
+  const el = $("selPlaca");
+  if (!el) return;
+  const guardada = localStorage.getItem(PLACA_PREF) || "";
+  if (guardada && PLACAS[guardada]) return;            // manda la eleccion del usuario
+  const d = (lastStatus && lastStatus.board) || "";
+  el.value = PLACAS[d] ? d : "";
+}
+
+// El usuario elige (o vuelve a "(lo pregunto al nodo)"). Se recuerda en el navegador.
+function placaCambiada(){
+  const el = $("selPlaca");
+  if (!el) return;
+  const v = el.value;
+  if (v && PLACAS[v]){
+    localStorage.setItem(PLACA_PREF, v);
+  } else {
+    localStorage.removeItem(PLACA_PREF);               // vuelve a preguntarle al nodo
+    aplicaPlacaDelNodo();
+  }
+}
 /* ================= valores recomendados =================
    Ajustes habituales de la red APRS-LoRa, para dejar un nodo listo en un
    minuto. NO toca el indicativo ni las coordenadas: eso es de cada uno. */
 function recommendedValues(){
   const mod = (lastStatus && lastStatus.radio && lastStatus.radio.module) || "";
   const e22p = /E22P/i.test(mod);
+  // ★ LOS VOLTAJES DE BATERIA VAN POR APARATO (2026-09-21). Si sabemos qué aparato es
+  //   (elegido a mano o dicho por el nodo), se ponen los suyos. Si NO lo sabemos, NO SE
+  //   TOCAN: se quedan como los traiga el nodo, que son los correctos de fábrica para su
+  //   placa. Antes se recomendaban los de la Faketec a todo el mundo, y en un T-Echo eso
+  //   apaga el nodo con la batería a media carga.
+  const placa = placaElegida();
+  const bat = placa ? PLACAS[placa] : null;
   return {
     mode: 2, symbol: "#", comment: "", status: "", msgText: "",
-    // Matrícula del firmware y ruta de respaldo: si faltan, el nodo usa APLRG1
-    // (aprs.fi lo atribuiría al firmware de otra persona) y su ruta guardada.
-    tocall: "APZFKT", path: "WIDE1-1",
+    // ★ EL TOCALL YA NO SE RECOMIENDA DESDE AQUI (2026-09-21): se quito el campo del
+    //   formulario, asi que este boton no lo toca. El nodo lleva APL2OY de fabrica y
+    //   solo se cambia por consola (`set tocall ...`). Ver el comentario del esquema.
+    //   Lo que SI se sigue poniendo es la ruta de respaldo.
+    path: "WIDE1-1",
     pathDigi: "WIDE1-1", pathTracker: "WIDE1-1,WIDE2-1", pathBoth: "WIDE1-1,WIDE2-1",
     latitude: null, longitude: null,          // no se tocan
     // ★ LOS TRES INTERVALOS DESINCRONIZADOS (2026-09-15): 30 / 53 / 55, los mismos que
@@ -2562,7 +2664,9 @@ function recommendedValues(){
     // Mensaje de dormido: de fábrica viene VACÍO (config.h: char sleepMsg[64] = "").
     sleepMsg: "",
     epdRotation: 1,
-    sleepCutMv: e22p ? 3500 : 3400, sleepWakeMv: 3710,
+    // ★ POR APARATO (ver PLACAS arriba). Si no sabemos cuál es, `null` = no se toca el
+    //   campo (applyPreset salta los null), y se queda el que traiga el nodo.
+    sleepCutMv: bat ? bat.cut : null, sleepWakeMv: bat ? bat.wake : null,
     // Consultas por radio: de fabrica vienen APAGADAS y su propia ayuda dice que
     // son "una puerta abierta". Los valores recomendados no pueden recomendar lo
     // contrario de lo que dice la ayuda.
@@ -3636,6 +3740,10 @@ function updateLogWarn(){
 }
 function updateStatus(s){
   lastStatus = s;
+  // ★ APARATO: si el usuario no ha elegido ninguno a mano, se pone el que dice el nodo
+  //   (`status.board`). La elección manual se recuerda en este navegador y manda sobre lo
+  //   que diga el nodo (ver PLACAS y placaElegida()).
+  aplicaPlacaDelNodo();
   // ★ MODO DIAGNOSTICO (2026-09-16): el `status` trae `diag` = "esta saliendo de verdad"
   //   (encendido y sin TNC encima). Si sale, el interruptor esta puesto. Si NO sale no se
   //   toca nada: puede estar encendido y callado por el TNC, y el status no distingue esos
@@ -3816,6 +3924,13 @@ $("btnSave").onclick = async ()=>{
   setTimeout(()=>{ busy=false; }, 1500);
 };
 $("btnPreset").onclick = applyPreset;
+// ★ APARATO: la eleccion del usuario se recuerda y manda sobre lo que diga el nodo.
+//   Al cargar la pagina se pone la que hubiera guardada (si la hay).
+if ($("selPlaca")) {
+  $("selPlaca").onchange = placaCambiada;
+  const guardada = localStorage.getItem(PLACA_PREF) || "";
+  if (guardada && PLACAS[guardada]) $("selPlaca").value = guardada;
+}
 $("btnRevert").onclick = ()=>{ cmdJson({cmd:"get"}); toast(t("revert_done")); };
 $("btnExport").onclick = ()=>{
   const blob = new Blob([JSON.stringify(collectConfig(), null, 2)], {type:"application/json"});
