@@ -408,7 +408,7 @@ dialog .row{justify-content:flex-end}
     <section class="panel" id="panel-guide">
       <div class="card">
         <h2 data-i18n="guide_title">Tracks para guiarme</h2>
-        <p class="hint" data-i18n="guide_hint">Carga una ruta (un GPX de WikiLoc) y el nodo te guía por ella: brújula, desviación y lo que te falta. Caben 5 rutas, y cada una hasta 2040 puntos: si el GPX trae más, se simplifica solo aquí antes de mandarlo.</p>
+        <p class="hint" data-i18n="guide_hint">Carga una ruta (un GPX de WikiLoc) y el nodo te guía por ella: brújula, desviación y lo que te falta. Caben 5 rutas, y el tope de puntos de cada una te lo dice el nodo al entrar aquí: si el GPX trae más, se simplifica solo antes de mandarlo.</p>
 
         <div class="row">
           <label class="lbl" data-i18n="guide_pick">1. Elige el fichero GPX</label>
@@ -419,7 +419,10 @@ dialog .row{justify-content:flex-end}
 
         <div class="row">
           <label class="lbl" data-i18n="guide_simpl">2. Simplificar a</label>
-          <input type="number" id="guiaTope" value="2040" min="10" max="2040" step="10">
+          <!-- ★ El `value` y el `max` son SOLO el punto de partida: al abrir la pestaña se le
+               pregunta el tope al nodo y se pone el que diga. Se deja aqui el que hay hoy para no
+               ensenar un numero viejo mientras llega la respuesta. -->
+          <input type="number" id="guiaTope" value="1698" min="10" max="1698" step="10">
           <span data-i18n="guide_points">puntos</span>
         </div>
 
@@ -769,10 +772,17 @@ const I18N = {
     obj_empty:"Sin objetos enviados en esta sesión.",
     obj_sent:"Objeto enviado: ", obj_killed:"Objeto borrado: ", obj_need:"Rellena el nombre y las coordenadas.",
     /* ===== GUIADO POR TRACKS (2026-09-22) =====
-       OJO con el tope: el firmware guarda 2040 puntos por ranura y NO recorta en silencio: si
-       mandas mas, RECHAZA el track con el motivo. Por eso el aviso del tope esta a la vista. */
+       ★★ EL TOPE LO DICE EL NODO, Y AQUI NO SE CLAVA (2026-10-06) ★★
+       Estos textos decian el tope VIEJO (2040 puntos). El de verdad hoy es **1698**: al pasar el
+       punto de 10 a 12 bytes en la flash, bajo la capacidad. El codigo hacia lo correcto —le
+       pregunta el tope al nodo con `track_list` y actualiza el campo—, pero **la ayuda le decia
+       al usuario un numero que ya no era**: y un numero viejo en una ayuda hace que el operador
+       no se fie de lo que ve.
+       ★ AHORA EL TEXTO NO LLEVA NUMERO: dice que el tope lo pone el nodo, y el numero que sale
+         en pantalla es el que acaba de contestar. Asi no hay nada que se pueda quedar viejo.
+       Y NO se recorta en silencio: si mandas mas, el nodo RECHAZA el track con el motivo. */
     guide:"Guiado", guide_title:"Tracks para guiarme",
-    guide_hint:"Carga una ruta (un GPX de WikiLoc) y el nodo te guia por ella: brujula, desviacion y lo que te falta. Caben 5 rutas, y cada una hasta 2040 puntos: si el GPX trae mas, se simplifica solo aqui antes de mandarlo.",
+    guide_hint:"Carga una ruta (un GPX de WikiLoc) y el nodo te guia por ella: brujula, desviacion y lo que te falta. Caben 5 rutas, y el tope de puntos de cada una te lo dice el nodo al entrar aqui: si el GPX trae mas, se simplifica solo antes de mandarlo.",
     guide_pick:"1. Elige el fichero GPX", guide_file:"Ningun fichero",
     guide_simpl:"2. Simplificar a", guide_points:"puntos",
     guide_points_now:"El GPX trae", guide_points_seg:"puntos; simplificado quedaria en",
@@ -987,9 +997,12 @@ const I18N = {
     obj_send:"Send object", obj_kill:"Delete object", obj_name_ph:"NAME", obj_cmt_ph:"Comment",
     obj_empty:"No objects sent in this session.",
     obj_sent:"Object sent: ", obj_killed:"Object deleted: ", obj_need:"Fill in the name and the coordinates.",
-    /* ===== TRACK GUIDANCE (2026-09-22) ===== */
+    /* ===== TRACK GUIDANCE (2026-09-22) =====
+       ★ The point limit comes FROM THE NODE (see the Spanish note above): it used to say 2040
+       here, which was the old limit. The text no longer carries a number on purpose, so it can
+       never go stale again. */
     guide:"Guidance", guide_title:"Tracks to follow",
-    guide_hint:"Load a route (a WikiLoc GPX) and the node guides you along it: compass, off-track distance and what is left. Up to 5 routes, 2040 points each: if the GPX has more, it is simplified here before sending.",
+    guide_hint:"Load a route (a WikiLoc GPX) and the node guides you along it: compass, off-track distance and what is left. Up to 5 routes, and the node tells you the point limit for each one when you open this tab: if the GPX has more, it is simplified before sending.",
     guide_pick:"1. Pick the GPX file", guide_file:"No file",
     guide_simpl:"2. Simplify to", guide_points:"points",
     guide_points_now:"The GPX has", guide_points_seg:"points; simplified it would be",
@@ -3004,7 +3017,15 @@ function fechaValida(y, m, d){
    Con el primer punto bueno, la fecha y la hora del nombre del fichero son las
    de verdad. */
 const BOOT_RE = /(?:^|\s)EVT boot\b/;
-const HUECO_SESION_S = 30 * 60;       // mas de 30 min de silencio = otra salida
+/* ★★ 5 HORAS, NO 30 MINUTOS (2026-10-06) ★★
+   Con 30 minutos, cada vez que te sentabas a comer se partia el paseo en dos, y eso tenia un
+   efecto malo de verdad: el aparato guia "hacia atras" por UNA salida, asi que volver a casa te
+   dejaba EN EL SITIO DE LA PARADA en vez de en casa. Con 5 horas, un dia de monte entero cabe en
+   una sola salida.
+   ★ ESTE NUMERO TIENE QUE SER EL MISMO QUE `TRACK_SESION_HUECO_S` EN EL FIRMWARE
+     (`src/tracks_sesiones.h`). Si no coinciden, el aparato y esta pagina ensenarian listas
+     distintas del mismo viaje, y eso si que seria un lio para el operador. */
+const HUECO_SESION_S = 5 * 60 * 60;   // mas de 5 h de silencio = otra salida
 
 function parseLog(fuenteIn){
   const lineas = fuenteIn || logLines || [];
@@ -4278,7 +4299,8 @@ initVolverArriba();   // el boton de "volver arriba" (aparece al desplazarse)
    se lo manda al nodo POR TROZOS. El nodo lo guarda y luego puede guiarte por esa ruta.
 
    ★★ POR QUE SE SIMPLIFICA, Y POR QUE CON RAMER-DOUGLAS-PEEUCKER ★★
-     Un GPX de WikiLoc trae miles de puntos (uno cada pocos metros). En una ranura caben 2040.
+     Un GPX de WikiLoc trae miles de puntos (uno cada pocos metros). En una ranura caben los que
+     diga el nodo (hoy 1698; se le pregunta, no se clava aqui).
      Quedarse con uno de cada N seria lo facil, pero ROMPE LAS CURVAS: en una carretera de
      montana, quedarse con uno de cada cinco corta las eses y la ruta dibujada se va por el
      barranco. RDP quita los puntos que NO anaden informacion (los de una recta) y CONSERVA los
@@ -4296,7 +4318,7 @@ initVolverArriba();   // el boton de "volver arriba" (aparece al desplazarse)
 const Guia = (()=>{
   let puntos = [];          // la ruta ya simplificada, lista para mandar
   let puntosCrudos = 0;     // cuantos traia el GPX (para ensenarlo)
-  let tope = 2040;          // lo actualiza el nodo al preguntarle
+  let tope = 1698;          // ★ SOLO el valor de partida: el nodo lo actualiza al preguntarle
   let enviando = false;
 
   const $g = (id)=> document.getElementById(id);
@@ -4330,7 +4352,7 @@ const Guia = (()=>{
   //       y conserva los que definen la forma (las curvas). Es el que se usa aqui.
   //
   //   ★ Y NO SE USA UNA TOLERANCIA A OJO: RDP necesita un "hasta aqui vale" (una tolerancia en
-  //     metros), y elegirla mal deja la ruta con 300 puntos cuando caben 2040 (desperdicio) o
+  //     metros), y elegirla mal deja la ruta con 300 puntos cuando caben miles (desperdicio) o
   //     con 3000 (el nodo la rechaza). Aqui se puntua CADA punto por lo que aporta y se cogen
   //     los mejores hasta llenar el presupuesto, que es la forma de aprovecharlo entero.
   //
